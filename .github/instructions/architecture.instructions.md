@@ -39,36 +39,95 @@ API → Application + Infrastructure (DI only)
 
 ## Folder Organization
 
-Feature/domain-oriented structure:
+Follow hexagonal architecture principles with pragmatic evolution.
+Start simple, add structure only when complexity demands it.
 
+Examples (lean on existing codebase namings and patterns):
+
+### Small projects & microservices
+
+Single project with layer-based folders:
+```
+/Api
+  CreateOrder.cs           # Endpoint + DTOs
+  RegisterCustomer.cs
+/Application
+  OrderService.cs          # Business logic
+  IOrderRepository.cs      # Port (interface)
+/Domain
+  Order.cs                 # Core domain model
+  Customer.cs
+/Infrastructure
+  OrderRepository.cs       # Adapter (implementation)
+  PaymentGatewayAdapter.cs
+```
+
+**When to evolve:** Multiple developers, >15 files per folder, or cross-cutting concerns blur.
+
+### Medium projects
+
+Add feature folders within layers:
 ```
 /Api
   /Orders
-    CreateOrder.cs          # Endpoint
-    CreateOrderRequest.cs   # DTO
-    CreateOrderResponse.cs  # DTO
+    CreateOrder.cs
+    CreateOrderDto.cs
   /Customers
     RegisterCustomer.cs
-    RegisterCustomerRequest.cs
-
+    RegisterCustomerDto.cs
 /Application
   /Orders
-    IOrderRepository.cs     # Repository interface
-    OrderService.cs         # Application service
+    OrderService.cs
+    IOrderRepository.cs
   /Customers
-    ICustomerRepository.cs
     CustomerService.cs
-
+    ICustomerRepository.cs
 /Domain
-  Order.cs                 # Domain model
-  Customer.cs
-
+  /Orders
+    Order.cs
+  /Customers
+    Customer.cs
 /Infrastructure
   /Persistence
-    OrderRepository.cs     # IOrderRepository implementation
+    OrderRepository.cs
+    CustomerRepository.cs
   /ExternalServices
     PaymentGatewayAdapter.cs
 ```
+
+**When to evolve:** Teams working on different features, or preparing for extraction.
+
+### Large projects & modular monoliths
+
+Vertical slices per bounded context (project or top-level folder):
+```
+/Orders                     # Self-contained module
+  /Api
+    CreateOrder.cs
+  /Application
+    OrderService.cs
+    IOrderRepository.cs
+  /Domain
+    Order.cs
+  /Infrastructure
+    OrderRepository.cs
+    
+/Customers
+  /Api
+    RegisterCustomer.cs
+  /Application
+    CustomerService.cs
+  /Domain
+    Customer.cs
+  /Infrastructure
+    CustomerRepository.cs
+```
+
+**When to use:** Multiple teams, clear bounded contexts, or microservice migration path.
+
+---
+
+**Key principle:** Defer structure until pain points emerge. Wrong abstraction is worse than duplication.
 
 ## API Design
 
