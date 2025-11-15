@@ -42,14 +42,21 @@ API → Application + Infrastructure (DI only)
 Feature/domain-oriented structure:
 
 ```
-/Features
+/Api
   /Orders
     CreateOrder.cs          # Endpoint
     CreateOrderRequest.cs   # DTO
-    GetOrder.cs            # Endpoint
-    OrderService.cs        # Application service
+    CreateOrderResponse.cs  # DTO
   /Customers
     RegisterCustomer.cs
+    RegisterCustomerRequest.cs
+
+/Application
+  /Orders
+    IOrderRepository.cs     # Repository interface
+    OrderService.cs         # Application service
+  /Customers
+    ICustomerRepository.cs
     CustomerService.cs
 
 /Domain
